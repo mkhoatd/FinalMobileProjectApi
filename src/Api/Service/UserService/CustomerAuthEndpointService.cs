@@ -17,7 +17,7 @@ public class CustomerAuthEndpointService : ICustomerAuthEndpointService
 
     public async Task<UserAuthDto> GetUserAsync(string phone, CancellationToken ct)
     {
-        var user = await this._dbContext.Users
+        var user = await this._dbContext.Users.AsNoTracking()
             .Where(u => u.Phone == phone)
             .Select(u => new UserAuthDto(u.Id, u.Name, u.Email, u.Avatar, u.Phone, u.Username, u.Role.Name))
             .FirstOrDefaultAsync(cancellationToken: ct);

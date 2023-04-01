@@ -10,6 +10,8 @@ using Api.PreProcessor;
 using Api.Service.AuthService;
 using Api.Service.UserService;
 
+using FastEndpoints.Security;
+
 using JorgeSerrano.Json;
 
 using Microsoft.AspNetCore.HttpLogging;
@@ -44,23 +46,25 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Host.UseConsoleLifetime(options => options.SuppressStatusMessages = true);
 
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
+
 
 builder.Services.AddFastEndpoints(options =>
 {
     options.SourceGeneratorDiscoveredTypes = new Type[] { };
 });
+builder.Services.AddJWTBearerAuth(config["Token:Key"]!);
 builder.Services.AddHttpLogging(logging =>
 {
     logging.LoggingFields = HttpLoggingFields.All;
+    logging.RequestHeaders.Add("Authorization");
+    logging.RequestHeaders.Add("WWW-Authenticate");
     logging.RequestBodyLogLimit = 4096;
     logging.ResponseBodyLogLimit = 4096;
 });
 
 builder.Services.AddSwaggerDoc(addJWTBearerAuth: true);
 
-builder.Services.AddScoped<IAuthService, FakeAuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerAuthEndpointService, CustomerAuthEndpointService>();
 
 var app = builder.Build();
@@ -105,14 +109,19 @@ app.UseFastEndpoints(options =>
     // };
 });
 
-if (app.Environment.IsDevelopment())
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseOpenApi();
+//     app.UseSwaggerUi3(x =>
+//     {
+//         x.ConfigureDefaults();
+//     });
+// }
+app.UseOpenApi();
+app.UseSwaggerUi3(x =>
 {
-    app.UseOpenApi();
-    app.UseSwaggerUi3(x =>
-    {
-        x.ConfigureDefaults();
-    });
-}
+    x.ConfigureDefaults();
+});
 
 app.MapGet("/", context =>
 {

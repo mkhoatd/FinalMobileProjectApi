@@ -5,19 +5,24 @@ public class IndexResponse
     public string Message { get; set; } = default!;
 }
 
-public class IndexEndpoint : EndpointWithoutRequest<IndexResponse>
+public class IndexRequest
+{
+    [FromClaim] public string UserId { get; init; } = default!;
+}
+
+public class IndexEndpoint : Endpoint<IndexRequest, IndexResponse>
 {
     public override void Configure()
     {
         Get("/");
-        AllowAnonymous();
+        Claims("UserId");
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(IndexRequest req, CancellationToken ct)
     {
         await SendOkAsync(new IndexResponse
         {
-            Message = "Dit me may"
+            Message = $"Hello {req.UserId}"
         }, ct);
     }
 }

@@ -1,3 +1,7 @@
+using System.Data;
+
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace FinalMobileProjectApi.E2E.Tests;

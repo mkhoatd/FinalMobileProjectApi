@@ -9,6 +9,6 @@ public class TutorDbContext : DbContext
     public TutorDbContext(DbContextOptions<TutorDbContext> options) : base(options)
     {
     }
-    public required DbSet<User> Users { get; set; }
-    public required DbSet<Role> Roles { get; set; }
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
 }
