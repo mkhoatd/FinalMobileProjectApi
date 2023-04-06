@@ -1,13 +1,12 @@
-using System.Text.Json;
-
 using Data;
 using Data.Seed;
+
 using Api.Extensions;
 
 using FastEndpoints.Swagger;
 
-using Api.PreProcessor;
 using Api.Service.AuthService;
+using Api.Service.TeacherService;
 using Api.Service.UserService;
 
 using FastEndpoints.Security;
@@ -24,7 +23,7 @@ var config = builder.Configuration;
 var connectionString = config.GetConnectionString("TutorDb");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
-    throw new Exception("Connection string is not set");
+    throw new ArgumentNullException(nameof(connectionString));
 }
 else
 {
@@ -46,8 +45,6 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Host.UseConsoleLifetime(options => options.SuppressStatusMessages = true);
 
 
-
-
 builder.Services.AddFastEndpoints(options =>
 {
     options.SourceGeneratorDiscoveredTypes = new Type[] { };
@@ -66,6 +63,7 @@ builder.Services.AddSwaggerDoc(addJWTBearerAuth: true);
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerAuthEndpointService, CustomerAuthEndpointService>();
+builder.Services.AddScoped<IClassroomService, ClassroomService>();
 
 var app = builder.Build();
 
@@ -76,9 +74,10 @@ using (var scoop = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<TutorDbContext>();
         var logger = services.GetRequiredService<ILogger<Program>>();
-        await context.Database.MigrateAsync();
+        await context.Database.MigrateAsync().ConfigureAwait(false);
         logger.LogInformation("Migrate success");
-        await context.SeedDbContextAsync(services.GetRequiredService<ILogger<TutorDbContext>>());
+        await context.SeedDbContextAsync(50, services.GetRequiredService<ILogger<TutorDbContext>>())
+            .ConfigureAwait(false);
         logger.LogInformation("Seed success");
     }
     catch (Exception e)
@@ -93,9 +92,10 @@ if (app.Environment.IsDevelopment())
     app.UseDefaultExceptionHandler();
 }
 
-app.UseHttpLogging();
+// app.UseHttpLogging();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseResponseCaching();
 
 app.UseFastEndpoints(options =>
 {
@@ -129,7 +129,7 @@ app.MapGet("/", context =>
     return Task.CompletedTask;
 });
 
-await app.RunAsync();
+await app.RunAsync().ConfigureAwait(false);
 
 public partial class Program
 {

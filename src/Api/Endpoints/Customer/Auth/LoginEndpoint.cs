@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
+using Api.Interface;
 using Api.Service.AuthService;
 
 using Api.Service.UserService;
@@ -37,11 +38,8 @@ public class Data
     public required string AccessToken { get; init; }
 }
 
-public class ValidCredentials
+public class ValidCredentials : BaseResponse<Data>
 {
-    public required string Message { get; init; }
-    public required string Status { get; init; }
-    public required Data Data { get; init; }
 }
 
 public class LoginEndpoint : Endpoint<LoginRequest, ValidCredentials>
@@ -65,7 +63,7 @@ public class LoginEndpoint : Endpoint<LoginRequest, ValidCredentials>
     {
         // var response = new OkResponse { Message = "cc", Status = "1", Data = "cc" };
         // await SendAsync(response, cancellation: ct);
-        if (await _authService.CredentialAreValidAsync(req.PhoneNumber, req.Password))
+        if (await _authService.CredentialAreValidAsync(req.PhoneNumber, req.Password).ConfigureAwait(false))
         {
             var jwtToken = _authService.CreateToken()!;
             await SendOkAsync(new ValidCredentials
@@ -74,16 +72,16 @@ public class LoginEndpoint : Endpoint<LoginRequest, ValidCredentials>
                 Status = "1",
                 Data = new Data
                 {
-                    Info = await _customerAuthEndpointService.GetUserAsync(req.PhoneNumber, ct),
+                    Info = await _customerAuthEndpointService.GetUserAsync(req.PhoneNumber, ct).ConfigureAwait(false),
                     AccessToken = jwtToken
                 },
-            }, ct);
+            }, ct).ConfigureAwait(false);
         }
         else
         {
             AddError(req => req.PhoneNumber, "Invalid phone number or password");
             AddError(req => req.Password, "Invalid phone number or password");
-            await SendErrorsAsync(401, ct);
+            await SendErrorsAsync(401, ct).ConfigureAwait(false);
         }
     }
 }

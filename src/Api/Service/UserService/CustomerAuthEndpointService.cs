@@ -1,6 +1,7 @@
 ﻿using Api.Endpoints.Customer.Auth;
 
 using Data;
+using Data.Entities;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -17,10 +18,36 @@ public class CustomerAuthEndpointService : ICustomerAuthEndpointService
 
     public async Task<UserAuthDto> GetUserAsync(string phone, CancellationToken ct)
     {
-        var user = await this._dbContext.Users.AsNoTracking()
+        var user = await this._dbContext.Students.AsNoTracking()
             .Where(u => u.Phone == phone)
-            .Select(u => new UserAuthDto(u.Id, u.Name, u.Email, u.Avatar, u.Phone, u.Username, u.Role.Name))
+            .Select(u => new UserAuthDto
+            (
+                u.Id,
+                u.Name,
+                u.Email,
+                u.Avatar,
+                u.Phone,
+                u.Username,
+                RoleName.Student.ToString()
+            ))
             .FirstOrDefaultAsync(cancellationToken: ct);
+        if (user == null)
+        {
+            user = await this._dbContext.Teachers.AsNoTracking()
+                .Where(u => u.Phone == phone)
+                .Select(u => new UserAuthDto
+                (
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    u.Avatar,
+                    u.Phone,
+                    u.Username,
+                    RoleName.Teacher.ToString()
+                ))
+                .FirstOrDefaultAsync(cancellationToken: ct);
+        }
+
         return user!;
     }
 }

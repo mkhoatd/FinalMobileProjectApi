@@ -1,16 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Data.Entities;
+namespace Data.Entities.Interfaces;
 
-[PrimaryKey(nameof(Id))]
-[Index(nameof(Phone), IsUnique = true)]
-public class User
+public abstract class User
 {
-    public int Id { get; set; }
+    public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required string Email { get; set; }
     public required string Avatar { get; set; }
@@ -19,9 +17,15 @@ public class User
     public required string Username { get; set; }
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }
-    public int RoleId { get; set; }
-    [ForeignKey("RoleId")]
-    public required Role Role{ get; set; }
+}
+
+public class UserEntityConfiguration : IEntityTypeConfiguration<User>
+{
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
+        builder.HasKey(s => s.Id);
+        builder.HasIndex(s => s.Phone).IsUnique();
+    }
 }
 
 public static class UserUtility
@@ -33,17 +37,11 @@ public static class UserUtility
         var salt = hmac.Key;
         return (hash, salt);
     }
+
     public static bool VerifyPassword(string password, byte[] hash, byte[] salt)
     {
         using var hmac = new HMACSHA512(salt);
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        for (var i = 0; i < computedHash.Length; i++)
-        {
-            if (computedHash[i] != hash[i])
-            {
-                return false;
-            }
-        }
-        return true;
+        return !computedHash.Where((t, i) => t != hash[i]).Any();
     }
 }

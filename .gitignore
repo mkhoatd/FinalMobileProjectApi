@@ -5,7 +5,7 @@
 
 pgdata/
 */*/certs
-
+certs/
 
 # User-specific files
 *.rsuser

@@ -4,7 +4,7 @@ namespace FinalMobileProjectApi.E2E.Tests.Endpoints;
 
 public class IndexEndpointTests : EndToEndTestCase
 {
-    protected override string Url => "/";
+    protected override string Url => "/api";
 
     [Fact]
     public async Task Should_Get_Information_Successfully()

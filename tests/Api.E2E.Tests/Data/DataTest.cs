@@ -1,4 +1,5 @@
 ﻿using Data;
+using Data.Seed;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +38,7 @@ public class DataTest
             builder.Database.ShouldEndWith(GetType().Name);
         }
     }
+
     [Fact]
     public void TestPostgreSqUniqueMethodOk()
     {
@@ -48,42 +50,48 @@ public class DataTest
             //VERIFY
             var builder = new NpgsqlConnectionStringBuilder(context.Database.GetDbConnection().ConnectionString);
             builder.Database
-                .ShouldEndWith($"{GetType().Name}_{nameof(TestPostgreSqUniqueMethodOk)}" );
+                .ShouldEndWith($"{GetType().Name}_{nameof(TestPostgreSqUniqueMethodOk)}");
         }
     }
+
     [Fact]
     public async Task TestEnsureCreatedOk()
     {
         //SETUP
         var options = this.CreatePostgreSqlUniqueClassOptions<TutorDbContext>();
         using var context = new TutorDbContext(options);
-            
+
         await context.Database.EnsureDeletedAsync();
         await context.Database.EnsureCreatedAsync();
 
         //ATTEMPT
-        await context.SeedDbContextTestAsync();
+        int numUser = 50;
+        using (new TimeThings(_output, "Time to seed database"))
+        {
+            await context.SeedDbContextAsync(numUser);
+        }
 
         //VERIFY
-        context.Users.Count().ShouldEqual(2);
-        context.Roles.Count().ShouldEqual(2);
+        context.Students.Count().ShouldEqual(numUser);
+        context.Classrooms.Count().ShouldEqual(5);
     }
+
     [Fact]
     public async Task TestEnsureDeletedOk()
     {
         //SETUP
         var options = this.CreatePostgreSqlUniqueClassOptions<TutorDbContext>();
-        using var context = new TutorDbContext(options);
-        context.Database.EnsureCreated();
-        await context.SeedDbContextTestAsync();
+        await using var context = new TutorDbContext(options);
+        await context.Database.EnsureCreatedAsync();
+        await context.SeedDbContextAsync(2);
         //ATTEMPT
         using (new TimeThings(_output, "Time to EnsureDeleted and EnsureCreated"))
         {
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
         }
+
         //VERIFY
-        context.Users.Count().ShouldEqual(0);
+        context.Students.Count().ShouldEqual(0);
     }
-    
 }

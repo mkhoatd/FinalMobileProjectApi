@@ -1,4 +1,7 @@
-﻿using Data.Entities;
+﻿using System.Reflection;
+
+using Data.Entities;
+using Data.Entities.Interfaces;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +12,14 @@ public class TutorDbContext : DbContext
     public TutorDbContext(DbContextOptions<TutorDbContext> options) : base(options)
     {
     }
-    public DbSet<User> Users { get; set; } = null!;
-    public DbSet<Role> Roles { get; set; } = null!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
+
+    public DbSet<Student> Students { get; set; } = null!;
+    public DbSet<Teacher> Teachers { get; set; } = null!;
+    public DbSet<Classroom> Classrooms { get; set; } = null!;
+    public DbSet<StudySession> Sessions { get; set; } = null!;
 }

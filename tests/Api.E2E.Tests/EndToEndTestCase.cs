@@ -2,7 +2,7 @@ using System.Data;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(DisableTestParallelization = false)]
 
 namespace FinalMobileProjectApi.E2E.Tests;
 
@@ -28,7 +28,6 @@ public abstract class EndToEndTestCase : IAsyncDisposable
 
             });
         });
-
         Client = Application.CreateClient();
     }
 

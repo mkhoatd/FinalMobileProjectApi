@@ -1,8 +1,8 @@
 ﻿namespace Api.Interface;
 
-public class OkResponse
+public class BaseResponse<T>
 {
-    public string Status { get; set; }
-    public string Data { get; set; }
-    public string Message { get; set; }
+    public required string Status { get; set; }
+    public required T Data { get; set; }
+    public required string Message { get; set; }
 }
