@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -12,11 +12,13 @@ namespace Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    RoleName = table.Column<int>(type: "integer", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Avatar = table.Column<string>(type: "text", nullable: false),
                     Phone = table.Column<string>(type: "text", nullable: false),
@@ -24,29 +26,31 @@ namespace Data.Migrations
                     Username = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: false),
-                    Discriminator = table.Column<string>(type: "text", nullable: false)
+                    DeviceToken = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Classrooms",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    TeacherId = table.Column<Guid>(type: "uuid", nullable: false)
+                    TeacherId = table.Column<int>(type: "integer", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Classrooms", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Classrooms_User_TeacherId",
+                        name: "FK_Classrooms_Users_TeacherId",
                         column: x => x.TeacherId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -55,8 +59,8 @@ namespace Data.Migrations
                 name: "ClassroomStudent",
                 columns: table => new
                 {
-                    ClassroomsId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StudentsId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ClassroomsId = table.Column<int>(type: "integer", nullable: false),
+                    StudentsId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,9 +72,9 @@ namespace Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClassroomStudent_User_StudentsId",
+                        name: "FK_ClassroomStudent_Users_StudentsId",
                         column: x => x.StudentsId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -79,11 +83,12 @@ namespace Data.Migrations
                 name: "Sessions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DayOfWeek = table.Column<string>(type: "text", nullable: false),
                     StartTime = table.Column<string>(type: "text", nullable: false),
                     EndTime = table.Column<string>(type: "text", nullable: false),
-                    ClassroomId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ClassroomId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,8 +117,8 @@ namespace Data.Migrations
                 column: "ClassroomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_Phone",
-                table: "User",
+                name: "IX_Users_Phone",
+                table: "Users",
                 column: "Phone",
                 unique: true);
         }
@@ -131,7 +136,7 @@ namespace Data.Migrations
                 name: "Classrooms");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Users");
         }
     }
 }

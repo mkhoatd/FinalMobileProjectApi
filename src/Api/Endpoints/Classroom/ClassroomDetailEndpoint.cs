@@ -12,8 +12,8 @@ public record Data
 {}
 
 
-public class ClassroomDetailEndpoint : Endpoint<ClassroomDetailRequest, >
-{
-    
-    
-}
+// public class ClassroomDetailEndpoint : Endpoint<ClassroomDetailRequest, >
+// {
+//     
+//     
+// }

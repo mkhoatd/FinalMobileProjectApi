@@ -42,4 +42,8 @@
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Endpoints\Teacher" />
+  </ItemGroup>
+
 </Project>

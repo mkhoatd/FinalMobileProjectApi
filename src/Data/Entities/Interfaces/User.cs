@@ -8,8 +8,9 @@ namespace Data.Entities.Interfaces;
 
 public abstract class User
 {
-    public required Guid Id { get; set; }
+    public int Id { get; set; }
     public required string Name { get; set; }
+    public required RoleName RoleName { get; set; }
     public required string Email { get; set; }
     public required string Avatar { get; set; }
     public required string Phone { get; set; }
@@ -17,14 +18,18 @@ public abstract class User
     public required string Username { get; set; }
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }
+    public string? DeviceToken { get; set; }
 }
 
 public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasKey(s => s.Id);
-        builder.HasIndex(s => s.Phone).IsUnique();
+        builder.HasKey(u => u.Id);
+        builder.HasIndex(u => u.Phone).IsUnique();
+        builder.HasDiscriminator(u => u.RoleName)
+            .HasValue<Teacher>(RoleName.Teacher)
+            .HasValue<Student>(RoleName.Student);
     }
 }
 

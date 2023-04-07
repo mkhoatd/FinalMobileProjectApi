@@ -3,15 +3,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Entities;
 
+public enum SubjectName
+{
+    Toán,
+    Văn,
+    Anh,
+    Lý,
+    Hóa,
+    Sinh
+}
+
 public class Classroom
 {
-    public required Guid Id { get; set; }
-    public required string Name { get; set; }
+    public int Id { get; set; }
+    public required SubjectName Name { get; set; }
     public required string Description { get; set; }
     public required List<Student> Students { get; set; }
-    public required Guid TeacherId { get; set; }
+    public int TeacherId { get; set; }
     public required Teacher Teacher { get; set; }
     public required List<StudySession> StudySessions { get; set; }
+    public bool IsDeleted { get; set; }
 }
 
 public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
@@ -28,5 +39,9 @@ public class ClassroomEntityConfiguration : IEntityTypeConfiguration<Classroom>
             .IsRequired();
         builder.HasMany(c => c.StudySessions)
             .WithOne(s => s.Classroom);
+        builder.Property(c => c.Name)
+            .HasConversion(
+                n => n.ToString(),
+                s => Enum.Parse<SubjectName>(s));
     }
 }

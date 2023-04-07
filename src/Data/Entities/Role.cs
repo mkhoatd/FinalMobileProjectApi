@@ -14,7 +14,7 @@ public enum RoleName
 
 public class Role
 {
-    public required Guid Id { get; set; }
+    public int Id { get; set; }
     public required RoleName Name { get; set; }
     public required List<User> Users { get; set; } 
 }

@@ -1,10 +1,11 @@
-﻿namespace Api.Endpoints.Classroom;
+﻿namespace Api.Endpoints.Classroom.Dto;
 
 public record ClassroomDto
 {
-    public Guid Id { get; init; }
+    public int Id { get; init; }
     public string Name { get; init; }
 
     public string Description { get; init; }
+    public int ClassroomSize { get; init; }
     public List<StudySessionDto> StudySessions { get; init; }
 };

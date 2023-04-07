@@ -1,16 +1,19 @@
-﻿using Api.Interface;
+﻿using Api.Endpoints.Classroom.Dto;
+using Api.Interface;
 using Api.Service.TeacherService;
 
 namespace Api.Endpoints.Classroom;
 
 public record DataClassroomsEndpoint
 {
+    public decimal Salary { get; init; }
+
     public List<ClassroomDto> Classrooms { get; init; }
 }
 
 public record GetTeachingClassroomsRequest
 {
-    [FromClaim("UserId", true, false)] public Guid TeacherId { get; init; }
+    [FromClaim("UserId", true, false)] public int TeacherId { get; init; }
     [FromClaim("Role", true, false)] public string Role { get; init; }
 }
 
@@ -35,10 +38,18 @@ public class ClassroomsEndpoint : Endpoint<GetTeachingClassroomsRequest, GetTeac
     public override async Task HandleAsync(GetTeachingClassroomsRequest req, CancellationToken ct)
     {
         var dto = await _classroomService.GetTeachingClassroomsDtoAsync(req.TeacherId, ct);
+        var numStudent = 0;
+        foreach (ClassroomDto classroomDto in dto)
+        {
+            numStudent += classroomDto.ClassroomSize;
+        }
+
         var response = new GetTeachingClassroomsResponse
         {
-            Status = "1", Message = "Success", Data = new Data { Classrooms = dto }
+            Status = "1",
+            Message = "Success",
+            Data = new DataClassroomsEndpoint { Classrooms = dto, Salary = numStudent * 500000 * 0.7M, }
         };
-        await SendAsync(response, cancellation: ct);
+        await SendOkAsync(response, cancellation: ct);
     }
 }

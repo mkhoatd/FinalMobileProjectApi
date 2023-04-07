@@ -5,11 +5,11 @@ namespace Data.Entities;
 
 public class StudySession
 {   
-    public required Guid Id { get; set; }
+    public int Id { get; set; }
     public required DayOfWeek DayOfWeek { get; set; }
     public required TimeSpan StartTime { get; set; }
     public required TimeSpan EndTime { get; set; }
-    public required Guid ClassroomId { get; set; }
+    public required int ClassroomId { get; set; }
     public required Classroom Classroom { get; set; }
 }
 

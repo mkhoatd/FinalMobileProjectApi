@@ -1,9 +1,9 @@
-﻿namespace Api.Endpoints.Classroom;
+﻿namespace Api.Endpoints.Classroom.Dto;
 
 public record StudySessionDto
 
 {
-    public Guid Id { get; init; }
+    public int Id { get; init; }
     public string DayOfWeek { get; init; }
 
     public TimeSpan StartTime { get; init; }

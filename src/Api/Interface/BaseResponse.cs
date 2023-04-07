@@ -1,4 +1,5 @@
-﻿namespace Api.Interface;
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+namespace Api.Interface;
 
 public class BaseResponse<T>
 {

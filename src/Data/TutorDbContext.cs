@@ -22,4 +22,5 @@ public class TutorDbContext : DbContext
     public DbSet<Teacher> Teachers { get; set; } = null!;
     public DbSet<Classroom> Classrooms { get; set; } = null!;
     public DbSet<StudySession> Sessions { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
 }

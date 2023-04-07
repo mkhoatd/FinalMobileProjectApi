@@ -16,7 +16,7 @@ public static class Seed
         // await SeedRoleAsync(@this, logger).ConfigureAwait(false);
         // await SeedUserAsync(@this, 2, logger).ConfigureAwait(false);
         await @this.SeedUserAsync(userNumber, logger);
-        await @this.SeedClassroomAsync(5, logger);
+        await @this.SeedClassroomAsync(20, logger);
     }
 
     private static async Task SeedClassroomAsync(this TutorDbContext @this, int numClass,
@@ -31,20 +31,19 @@ public static class Seed
         var teachers = await @this.Teachers.ToListAsync();
         var students = await @this.Students.ToListAsync();
         var classroomFaker = new Faker<Classroom>()
-            .RuleFor(c => c.Id, f => Guid.NewGuid())
-            .RuleFor(c => c.Name, f => f.Lorem.Word())
+            .RuleFor(c => c.Name, f => (SubjectName)f.Random.Int(0, 5))
             .RuleFor(c => c.Description, f => f.Lorem.Sentence())
             .RuleFor(c => c.TeacherId, f =>
             {
                 var id = f.Random.Int(0, teachers.Count - 1);
                 var res = teachers[id].Id;
-                teachers.RemoveAt(id);
                 return res;
             })
-            .RuleFor(c => c.Students, f => students.Where(s => f.Random.Bool(0.5f)).ToList());
+            .RuleFor(c => c.Students, f => students.Where(s => f.Random.Bool(0.5f)).ToList())
+            .RuleFor(c => c.IsDeleted, f => false);
+        
         var classrooms = classroomFaker.Generate(numClass);
         var studySessionFaker = new Faker<StudySession>()
-            .RuleFor(c => c.Id, f => Guid.NewGuid())
             .RuleFor(c => c.DayOfWeek, f =>
             {
                 var index = f.Random.Int(0, 6);
@@ -96,7 +95,6 @@ public static class Seed
         }
 
         var studentFaker = new Faker<Student>()
-            .RuleFor(u => u.Id, f => Guid.NewGuid())
             .RuleFor(u => u.Username, f => f.Internet.UserName())
             .RuleFor(u => u.Address, f => f.Address.FullAddress())
             .RuleFor(u => u.Email, f => f.Internet.Email())
@@ -105,7 +103,6 @@ public static class Seed
             .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber("##########"));
 
         var teacherFaker = new Faker<Teacher>()
-            .RuleFor(u => u.Id, f => Guid.NewGuid())
             .RuleFor(u => u.Username, f => f.Internet.UserName())
             .RuleFor(u => u.Address, f => f.Address.FullAddress())
             .RuleFor(u => u.Email, f => f.Internet.Email())

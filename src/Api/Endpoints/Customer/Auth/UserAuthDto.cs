@@ -1,4 +1,12 @@
 ﻿namespace Api.Endpoints.Customer.Auth;
 
 public record UserAuthDto
-    (Guid Id, string Name, string Email, string Avatar, string Phone, string Username, string Role);
+{
+    public int Id { get; init; }
+    public string Name { get; init; }
+    public string Email { get; init; }
+    public string Avatar { get; init; }
+    public string Phone { get; init; }
+    public string Username { get; init; }
+    public string Role { get; init; }
+};

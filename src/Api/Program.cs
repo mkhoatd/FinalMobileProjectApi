@@ -21,6 +21,12 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 var connectionString = config.GetConnectionString("TutorDb");
+var csVar = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+if (!String.IsNullOrEmpty(csVar))
+{
+    connectionString = csVar;
+}
+
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     throw new ArgumentNullException(nameof(connectionString));

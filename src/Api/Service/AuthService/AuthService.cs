@@ -1,10 +1,13 @@
 ﻿using Data;
-using Data.Entities;
 using Data.Entities.Interfaces;
 
 using FastEndpoints.Security;
 
 using Microsoft.EntityFrameworkCore;
+
+using OneOf.Monads;
+
+using None = OneOf.Monads.None;
 
 namespace Api.Service.AuthService;
 
@@ -12,14 +15,9 @@ public class AuthService : IAuthService
 {
     private readonly IConfiguration _config;
     private readonly TutorDbContext _context;
-    private Student? _student;
-    private Teacher? _teacher;
-    private User? _user;
-    private string _role;
+    private Option<User> _user;
     private bool _isCredentialValid;
 
-    private string _phone;
-    private string _password;
 
     public AuthService(IConfiguration config, TutorDbContext context)
     {
@@ -27,52 +25,43 @@ public class AuthService : IAuthService
         _context = context;
     }
 
-    public async Task<bool> CredentialAreValidAsync(string phone, string password)
+    public async Task<Option<string>> CheckCredentialAndCreateTokenAsync(string phoneNumber, string password)
     {
-        this._phone = phone;
-        this._password = password;
-        var student = await _context.Students.AsNoTracking().Where(u => u.Phone == phone).FirstOrDefaultAsync()
-            .ConfigureAwait(false);
-        var teacher = await _context.Teachers.AsNoTracking().Where(u => u.Phone == phone).FirstOrDefaultAsync()
-            .ConfigureAwait(false);
-        if (student == null)
-        {
-            this._user = teacher;
-            this._role = RoleName.Teacher.ToString();
-        }
-        else
-        {
-            this._user = student;
-            this._role = RoleName.Student.ToString();
-        }
+        await this.CredentialAreValidAsync(phoneNumber, password);
+        return this.CreateToken();
+    }
 
-        if (this._user == null)
-        {
-            this._isCredentialValid = false;
-            return false;
-        }
-
+    private async Task<bool> CredentialAreValidAsync(string phone, string password)
+    {
+        var user = await _context.Users.AsNoTracking().Where(u => u.Phone == phone).FirstOrDefaultAsync();
+        this._user = user != null ? user : new None();
         this._isCredentialValid =
-            UserUtility.VerifyPassword(_password, this._user.PasswordHash, this._user.PasswordSalt);
+            this._user
+                .Bind(some => UserUtility.VerifyPassword(password, some.PasswordHash, some.PasswordSalt).ToOption())
+                .Match(
+                    none => false,
+                    some => some.Value);
         return this._isCredentialValid;
     }
 
-    public string? CreateToken()
+    private Option<String> CreateToken()
     {
-        if (!this._isCredentialValid)
-        {
-            return null;
-        }
+        return this._user.Match(
+            none => (Option<string>)(new None()),
+            some => JwtToken(some.Value));
+    }
 
+    private Option<string> JwtToken(User user)
+    {
         var jwtToken = JWTBearer.CreateToken(
             signingKey: _config["Token:Key"]!,
             expireAt: DateTime.UtcNow.AddHours(1),
             issuer: _config["Token:Issuer"],
             priviledges: u =>
             {
-                u.Claims.Add(new("PhoneNumber", this._phone));
-                u["UserID"] = this._user?.Id.ToString() ?? string.Empty; //indexer based claim setting
-                u["Role"] = this._role;
+                u.Claims.Add(new("PhoneNumber", user.Phone));
+                u["UserID"] = user.Id.ToString();
+                u["Role"] = user.RoleName.ToString();
             });
         return jwtToken;
     }

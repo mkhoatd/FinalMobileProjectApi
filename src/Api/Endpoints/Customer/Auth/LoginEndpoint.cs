@@ -1,18 +1,18 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net;
+using System.Text.Json.Serialization;
 
+using Api.Extensions;
 using Api.Interface;
 using Api.Service.AuthService;
-
 using Api.Service.UserService;
 
 namespace Api.Endpoints.Customer.Auth;
 
-
 public record LoginRequest
 {
-    [JsonPropertyName("phone_number")]
-    public required string PhoneNumber { get; init; }
+    [JsonPropertyName("phone_number")] public required string PhoneNumber { get; init; }
     public required string Password { get; init; }
+    public string? DeviceToken { get; init; }
 }
 
 public class LoginRequestValidator : Validator<LoginRequest>
@@ -61,27 +61,31 @@ public class LoginEndpoint : Endpoint<LoginRequest, ValidCredentials>
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
-        // var response = new OkResponse { Message = "cc", Status = "1", Data = "cc" };
-        // await SendAsync(response, cancellation: ct);
-        if (await _authService.CredentialAreValidAsync(req.PhoneNumber, req.Password).ConfigureAwait(false))
-        {
-            var jwtToken = _authService.CreateToken()!;
-            await SendOkAsync(new ValidCredentials
+        var jwtTokenOrNone = await _authService.CheckCredentialAndCreateTokenAsync(req.PhoneNumber, req.Password);
+        await jwtTokenOrNone.Match(
+            async _ =>
             {
-                Message = "Success",
-                Status = "1",
-                Data = new Data
-                {
-                    Info = await _customerAuthEndpointService.GetUserAsync(req.PhoneNumber, ct).ConfigureAwait(false),
-                    AccessToken = jwtToken
-                },
-            }, ct).ConfigureAwait(false);
-        }
-        else
-        {
-            AddError(req => req.PhoneNumber, "Invalid phone number or password");
-            AddError(req => req.Password, "Invalid phone number or password");
-            await SendErrorsAsync(401, ct).ConfigureAwait(false);
-        }
+                AddError(req => req.PhoneNumber, "Wrong phone number or password");
+                AddError(req => req.Password, "Wrong phone number or password");
+                await SendErrorsAsync(HttpStatusCode.Unauthorized.Value(), ct);
+            },
+            async jwtToken =>
+            {
+                if (!String.IsNullOrEmpty(req.DeviceToken))
+                    await _customerAuthEndpointService.SaveDeviceToken(req.PhoneNumber, req.DeviceToken, ct);
+
+                await SendOkAsync(
+                    new ValidCredentials
+                    {
+                        Message = "Success",
+                        Status = "1",
+                        Data = new Data
+                        {
+                            Info = await _customerAuthEndpointService.GetUserAsync(req.PhoneNumber, ct)
+                                .ConfigureAwait(false),
+                            AccessToken = jwtToken.Value
+                        },
+                    }, ct).ConfigureAwait(false);
+            });
     }
 }
