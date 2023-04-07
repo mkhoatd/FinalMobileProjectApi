@@ -7,10 +7,10 @@ EXPOSE 5001
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/", "./"]
-RUN dotnet publish "./Api" -c Release --no-self-contained -o /app/publish
 COPY ["src/Api/certs/", "/app/publish/certs"]
+RUN dotnet publish "./Api" -c Release --no-self-contained -o /app/publish
 
 FROM base AS final
-WORKDIR /app
+WORKDIR /app/publish
 COPY --from=build /app/publish .
-ENTRYPOINT ["ls certs"]
+ENTRYPOINT ["dotnet", "Api.dll"]
