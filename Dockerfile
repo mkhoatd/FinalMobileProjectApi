@@ -13,4 +13,4 @@ COPY ["src/Api/certs/", "/app/publish/certs"]
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Api.dll"]
+ENTRYPOINT ["ls certs"]
