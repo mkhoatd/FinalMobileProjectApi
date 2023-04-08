@@ -1,5 +1,4 @@
-﻿using Api.Endpoints.Classroom;
-using Api.Endpoints.Classroom.Dto;
+﻿using Api.Endpoints.Classroom.Dto;
 
 using Data;
 
@@ -9,10 +8,10 @@ namespace Api.Service.TeacherService;
 
 public class ClassroomService : IClassroomService
 {
-    private readonly static Func<TutorDbContext, int, IAsyncEnumerable<ClassroomDto>> QueryTeachingClassroomsAsync =
-        EF.CompileAsyncQuery(((TutorDbContext context, int teacherId) =>
+    private readonly static Func<TutorDbContext, int, IAsyncEnumerable<ClassroomDto>> QueryUserClassroomsAsync =
+        EF.CompileAsyncQuery(((TutorDbContext context, int userId) =>
             from c in context.Classrooms
-            where c.TeacherId == teacherId && c.IsDeleted == false
+            where c.TeacherId == userId || c.Students.Any(s => s.Id == userId)
             select new ClassroomDto
             {
                 Id = c.Id,
@@ -36,10 +35,21 @@ public class ClassroomService : IClassroomService
         _dbContext = dbContext;
     }
 
+    public async Task<List<ClassroomDto>> GetClassroomsDtoAsync(int userId, CancellationToken ct)
+    {
+        var res = new List<ClassroomDto>();
+        await foreach (var item in QueryUserClassroomsAsync(_dbContext, userId).WithCancellation(ct))
+        {
+            res.Add(item);
+        }
+
+        return res;
+    }
+
     public async Task<List<ClassroomDto>> GetTeachingClassroomsDtoAsync(int teacherId, CancellationToken ct)
     {
         var res = new List<ClassroomDto>();
-        await foreach (var item in QueryTeachingClassroomsAsync(_dbContext, teacherId).WithCancellation(ct))
+        await foreach (var item in QueryUserClassroomsAsync(_dbContext, teacherId).WithCancellation(ct))
         {
             res.Add(item);
         }

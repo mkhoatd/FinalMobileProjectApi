@@ -41,7 +41,7 @@ public static class Seed
             })
             .RuleFor(c => c.Students, f => students.Where(s => f.Random.Bool(0.5f)).ToList())
             .RuleFor(c => c.IsDeleted, f => false);
-        
+
         var classrooms = classroomFaker.Generate(numClass);
         var studySessionFaker = new Faker<StudySession>()
             .RuleFor(c => c.DayOfWeek, f =>
@@ -109,6 +109,13 @@ public static class Seed
             .RuleFor(u => u.Avatar, f => f.Internet.Avatar())
             .RuleFor(u => u.Name, f => f.Name.FullName())
             .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber("##########"));
+        var adminFaker = new Faker<Admin>()
+            .RuleFor(u => u.Username, f => "mkhoatd")
+            .RuleFor(u => u.Address, f => f.Address.FullAddress())
+            .RuleFor(u => u.Email, f => f.Internet.Email())
+            .RuleFor(u => u.Avatar, f => f.Internet.Avatar())
+            .RuleFor(u => u.Name, f => f.Name.FullName())
+            .RuleFor(u => u.Phone, f => "1111111111");
 
         List<Student> students = new();
         for (int i = 0; i < userNumber; i++)
@@ -130,8 +137,14 @@ public static class Seed
             teachers.Add(teacher);
         }
 
-        await @this.Students.AddRangeAsync(students);
-        await @this.Teachers.AddRangeAsync(teachers);
+        var admin = adminFaker.Generate();
+        (byte[] hashAdmin, byte[] saltAdmin) = UserUtility.HashPassword("123456789");
+        admin.PasswordHash = hashAdmin;
+        admin.PasswordSalt = saltAdmin;
+
+        @this.Students.AddRange(students);
+        @this.Teachers.AddRange(teachers);
+        @this.Admins.Add(admin);
         await @this.SaveChangesAsync().ConfigureAwait(false);
         logger?.LogInformation("Seed users success");
     }

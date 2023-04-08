@@ -18,6 +18,8 @@ public abstract class User
     public required string Username { get; set; }
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }
+    public required List<Classroom> Classrooms { get; set; }
+
     public string? DeviceToken { get; set; }
 }
 
@@ -29,7 +31,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.Phone).IsUnique();
         builder.HasDiscriminator(u => u.RoleName)
             .HasValue<Teacher>(RoleName.Teacher)
-            .HasValue<Student>(RoleName.Student);
+            .HasValue<Student>(RoleName.Student)
+            .HasValue<Admin>(RoleName.Admin);
     }
 }
 

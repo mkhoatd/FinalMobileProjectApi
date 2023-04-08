@@ -7,7 +7,6 @@ namespace Data.Entities;
 
 public class Teacher : User
 {
-    public required List<Classroom> Classrooms { get; set; }
 }
 
 public class TeacherEntityConfiguration : IEntityTypeConfiguration<Teacher>

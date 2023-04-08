@@ -1,4 +1,5 @@
 ﻿using Data;
+using Data.Entities;
 using Data.Entities.Interfaces;
 
 using FastEndpoints.Security;
@@ -62,6 +63,7 @@ public class AuthService : IAuthService
                 u.Claims.Add(new("PhoneNumber", user.Phone));
                 u["UserID"] = user.Id.ToString();
                 u["Role"] = user.RoleName.ToString();
+                u.Roles.Add(RoleName.Admin.ToString());
             });
         return jwtToken;
     }

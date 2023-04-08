@@ -7,7 +7,6 @@ namespace Data.Entities;
 
 public class Student : User
 {
-    public required List<Classroom> Classrooms { get; set; }
 }
 
 public class StudentEntityConfiguration : IEntityTypeConfiguration<Student>

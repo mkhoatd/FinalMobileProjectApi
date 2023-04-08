@@ -5,5 +5,5 @@ namespace Api.Service.TeacherService;
 
 public interface IClassroomService
 {
-    Task<List<ClassroomDto>> GetTeachingClassroomsDtoAsync(int teacherId, CancellationToken ct);
+    Task<List<ClassroomDto>> GetClassroomsDtoAsync(int teacherId, CancellationToken ct);
 }
