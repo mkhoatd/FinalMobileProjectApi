@@ -8,7 +8,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/", "./"]
 COPY ["src/Api/certs/", "/app/publish/certs"]
-RUN dotnet publish "./Api" -c Release --no-self-contained -o /app/publish
+RUN dotnet publish "./Api" -c Production --no-self-contained -o /app/publish
 
 FROM base AS final
 WORKDIR /app/publish
