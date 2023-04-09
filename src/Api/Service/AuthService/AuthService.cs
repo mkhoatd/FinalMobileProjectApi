@@ -63,7 +63,7 @@ public class AuthService : IAuthService
                 u.Claims.Add(new("PhoneNumber", user.Phone));
                 u["UserID"] = user.Id.ToString();
                 u["Role"] = user.RoleName.ToString();
-                u.Roles.Add(RoleName.Admin.ToString());
+                u.Roles.Add(user.RoleName.ToString());
             });
         return jwtToken;
     }
