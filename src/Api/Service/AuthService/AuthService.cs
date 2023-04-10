@@ -56,7 +56,7 @@ public class AuthService : IAuthService
     {
         var jwtToken = JWTBearer.CreateToken(
             signingKey: _config["Token:Key"]!,
-            expireAt: DateTime.UtcNow.AddHours(1),
+            expireAt: DateTime.UtcNow.AddMonths(1),
             issuer: _config["Token:Issuer"],
             priviledges: u =>
             {
