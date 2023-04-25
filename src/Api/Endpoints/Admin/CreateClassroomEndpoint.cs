@@ -35,6 +35,20 @@ public class CreateClassroomRequestValidator : Validator<CreateClassroomRequest>
             {
                 foreach (StudySessionAdminRequestDto session in ss)
                 {
+                    if (!TimeSpan.TryParse(session.StartTime, out TimeSpan dummyOutput1) ||
+                        !TimeSpan.TryParse(session.StartTime, out TimeSpan dummyOutput2))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            })
+            .WithMessage("Start time and end time must be in format HH:mm:ss or HH:mm")
+            .Must(ss =>
+            {
+                foreach (StudySessionAdminRequestDto session in ss)
+                {
                     if (!Enum.IsDefined(typeof(DayOfWeek), session.DayOfWeek))
                     {
                         return false;
@@ -48,7 +62,7 @@ public class CreateClassroomRequestValidator : Validator<CreateClassroomRequest>
             {
                 foreach (StudySessionAdminRequestDto session in ss)
                 {
-                    if (session.StartTime >= session.EndTime)
+                    if (TimeSpan.Parse(session.StartTime) >= TimeSpan.Parse(session.EndTime))
                     {
                         return false;
                     }
@@ -84,7 +98,9 @@ public class CreateClassroomEndpoint : Endpoint<CreateClassroomRequest, CreateCl
         List<StudySessionAdminDto> studySessionAdminDtos = req.StudySessions.Select(ss =>
             new StudySessionAdminDto
             {
-                DayOfWeek = Enum.Parse<DayOfWeek>(ss.DayOfWeek), StartTime = ss.StartTime, EndTime = ss.EndTime
+                DayOfWeek = Enum.Parse<DayOfWeek>(ss.DayOfWeek),
+                StartTime = TimeSpan.Parse(ss.StartTime),
+                EndTime = TimeSpan.Parse(ss.EndTime)
             }).ToList();
         bool res = await _adminService.CreateClasssroomAsync(Enum.Parse<SubjectName>(req.Subject),
             req.TeacherId, req.Description, req.StudentIds, studySessionAdminDtos);
