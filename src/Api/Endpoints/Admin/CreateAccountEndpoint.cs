@@ -11,7 +11,7 @@ public record CreateAccountRequest
     public required string Username { get; init; }
     public required string PhoneNumber { get; init; }
     public required string Password { get; init; }
-    public required string Role { get; init; }
+    public string? Role { get; init; }
 }
 
 public class CreateAccountRequestValidator : Validator<CreateAccountRequest>
@@ -34,10 +34,6 @@ public class CreateAccountRequestValidator : Validator<CreateAccountRequest>
             .WithMessage("Password is required")
             .Length(6, 50)
             .WithMessage("Password must be longer than 6 ");
-        RuleFor(x => x.Role)
-            .NotEmpty()
-            .Must(r => Enum.IsDefined(typeof(RoleName), r))
-            .WithMessage("Invalid role");
     }
 }
 
@@ -68,7 +64,8 @@ public class CreateAccountEndpoint : Endpoint<CreateAccountRequest, CreateAccoun
 
     public override async Task HandleAsync(CreateAccountRequest req, CancellationToken ct)
     {
-        bool res = await _adminService.CreateAccountAsync(req.PhoneNumber, req.Password, Enum.Parse<RoleName>(req.Role),
+        bool res = await _adminService.CreateAccountAsync(req.PhoneNumber, req.Password,
+            Enum.Parse<RoleName>(req.Role ?? "Teacher"),
             req.Username, req.Name, ct);
         if (res)
         {

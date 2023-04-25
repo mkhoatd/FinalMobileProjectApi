@@ -10,8 +10,10 @@ public record CreateClassroomRequest
 {
     public required string Subject { get; init; }
     public required int TeacherId { get; init; }
+
     public required string Description { get; init; }
-    public required List<int> StudentIds { get; init; }
+
+    public required int NumberOfStudent { get; init; }
     public required List<StudySessionAdminRequestDto> StudySessions { get; init; }
 }
 
@@ -29,7 +31,7 @@ public class CreateClassroomRequestValidator : Validator<CreateClassroomRequest>
     public CreateClassroomRequestValidator()
     {
         RuleFor(x => x.TeacherId).NotEmpty();
-        RuleFor(x => x.StudentIds).NotEmpty();
+        RuleFor(x => x.NumberOfStudent).NotEmpty();
         RuleFor(x => x.StudySessions).NotEmpty()
             .Must(ss =>
             {
@@ -103,7 +105,7 @@ public class CreateClassroomEndpoint : Endpoint<CreateClassroomRequest, CreateCl
                 EndTime = TimeSpan.Parse(ss.EndTime)
             }).ToList();
         bool res = await _adminService.CreateClassroomAsync(Enum.Parse<SubjectName>(req.Subject),
-            req.TeacherId, req.Description, req.StudentIds, studySessionAdminDtos);
+            req.TeacherId, req.Description, req.NumberOfStudent, studySessionAdminDtos);
         if (res == false)
         {
             await SendErrorsAsync(cancellation: ct);
