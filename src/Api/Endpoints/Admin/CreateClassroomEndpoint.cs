@@ -37,8 +37,15 @@ public class CreateClassroomRequestValidator : Validator<CreateClassroomRequest>
             {
                 foreach (StudySessionAdminRequestDto session in ss)
                 {
-                    if (!TimeSpan.TryParse(session.StartTime, out TimeSpan dummyOutput1) ||
-                        !TimeSpan.TryParse(session.StartTime, out TimeSpan dummyOutput2))
+                    try
+                    {
+                        if (!TimeSpan.TryParse(session.StartTime, out TimeSpan dummyOutput1) ||
+                            !TimeSpan.TryParse(session.StartTime, out TimeSpan dummyOutput2))
+                        {
+                            return false;
+                        }
+                    }
+                    catch (FormatException ex)
                     {
                         return false;
                     }
