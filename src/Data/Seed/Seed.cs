@@ -16,7 +16,7 @@ public static class Seed
         // await SeedRoleAsync(@this, logger).ConfigureAwait(false);
         // await SeedUserAsync(@this, 2, logger).ConfigureAwait(false);
         await @this.SeedUserAsync(userNumber, logger);
-        await @this.SeedClassroomAsync(20, logger);
+        await @this.SeedClassroomAsync(10, logger);
     }
 
     private static async Task SeedClassroomAsync(this TutorDbContext @this, int numClass,

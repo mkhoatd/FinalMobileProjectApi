@@ -4,12 +4,12 @@ using Data;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Service.TeacherService;
+namespace Api.Service.ClassroomServices;
 
 public class ClassroomService : IClassroomService
 {
-    private readonly static Func<TutorDbContext, int, IAsyncEnumerable<ClassroomDto>> QueryUserClassroomsAsync =
-        EF.CompileAsyncQuery(((TutorDbContext context, int userId) =>
+    private static readonly Func<TutorDbContext, int, IAsyncEnumerable<ClassroomDto>> QueryUserClassroomsAsync =
+        EF.CompileAsyncQuery((TutorDbContext context, int userId) =>
             from c in context.Classrooms
             where c.TeacherId == userId || c.Students.Any(s => s.Id == userId)
             select new ClassroomDto
@@ -25,8 +25,8 @@ public class ClassroomService : IClassroomService
                         DayOfWeek = ss.DayOfWeek.ToString(),
                         StartTime = ss.StartTime,
                         EndTime = ss.EndTime
-                    }).ToList(),
-            }));
+                    }).ToList()
+            });
 
     private readonly TutorDbContext _dbContext;
 
@@ -37,8 +37,8 @@ public class ClassroomService : IClassroomService
 
     public async Task<List<ClassroomDto>> GetClassroomsDtoAsync(int userId, CancellationToken ct)
     {
-        var res = new List<ClassroomDto>();
-        await foreach (var item in QueryUserClassroomsAsync(_dbContext, userId).WithCancellation(ct))
+        List<ClassroomDto> res = new();
+        await foreach (ClassroomDto item in QueryUserClassroomsAsync(_dbContext, userId).WithCancellation(ct))
         {
             res.Add(item);
         }
@@ -48,8 +48,8 @@ public class ClassroomService : IClassroomService
 
     public async Task<List<ClassroomDto>> GetTeachingClassroomsDtoAsync(int teacherId, CancellationToken ct)
     {
-        var res = new List<ClassroomDto>();
-        await foreach (var item in QueryUserClassroomsAsync(_dbContext, teacherId).WithCancellation(ct))
+        List<ClassroomDto> res = new();
+        await foreach (ClassroomDto item in QueryUserClassroomsAsync(_dbContext, teacherId).WithCancellation(ct))
         {
             res.Add(item);
         }

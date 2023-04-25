@@ -1,6 +1,6 @@
 ﻿using Api.Endpoints.Classroom.Dto;
 using Api.Interface;
-using Api.Service.TeacherService;
+using Api.Service.ClassroomServices;
 
 using Data.Entities;
 

@@ -1,7 +1,6 @@
-﻿using Api.Endpoints.Classroom;
-using Api.Endpoints.Classroom.Dto;
+﻿using Api.Endpoints.Classroom.Dto;
 
-namespace Api.Service.TeacherService;
+namespace Api.Service.ClassroomServices;
 
 public interface IClassroomService
 {

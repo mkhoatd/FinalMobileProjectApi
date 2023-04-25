@@ -1,5 +1,4 @@
 ﻿using Data;
-using Data.Entities;
 using Data.Entities.Interfaces;
 
 using FastEndpoints.Security;
@@ -8,16 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 using OneOf.Monads;
 
-using None = OneOf.Monads.None;
-
 namespace Api.Service.AuthService;
 
 public class AuthService : IAuthService
 {
     private readonly IConfiguration _config;
     private readonly TutorDbContext _context;
-    private Option<User> _user;
     private bool _isCredentialValid;
+    private Option<User> _user;
 
 
     public AuthService(IConfiguration config, TutorDbContext context)

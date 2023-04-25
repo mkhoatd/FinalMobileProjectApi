@@ -24,25 +24,30 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.27.0" />
-    <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.4.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
-    <PackageReference Include="OneOf" Version="3.0.243" />
-    <PackageReference Include="OneOf.Monads" Version="1.21.0" />
-    <PackageReference Include="OneOf.SourceGenerator" Version="3.0.243" />
-    <PackageReference Include="Riok.Mapperly" Version="2.8.0-next.1" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.27.0"/>
+      <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.4.0"/>
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3"/>
+      <PackageReference Include="OneOf" Version="3.0.243"/>
+      <PackageReference Include="OneOf.Monads" Version="1.21.0"/>
+      <PackageReference Include="OneOf.SourceGenerator" Version="3.0.243"/>
+      <PackageReference Include="Riok.Mapperly" Version="2.8.0-next.1"/>
+      <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Data\Data.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Data\Data.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Endpoints\Teacher" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Endpoints\Teacher"/>
+        <Folder Include="Service\TeacherService"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="Service\TeacherService\IClassroomService.cs"/>
+    </ItemGroup>
 </Project>

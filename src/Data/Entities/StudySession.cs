@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Data.Entities;
 
 public class StudySession
-{   
+{
     public int Id { get; set; }
     public required DayOfWeek DayOfWeek { get; set; }
     public required TimeSpan StartTime { get; set; }
     public required TimeSpan EndTime { get; set; }
-    public required int ClassroomId { get; set; }
-    public required Classroom Classroom { get; set; }
+    public int ClassroomId { get; set; }
+    public Classroom Classroom { get; set; }
 }
 
 public class StudySessionEntityConfiguration : IEntityTypeConfiguration<StudySession>

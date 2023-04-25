@@ -1,21 +1,19 @@
+using Api.Extensions;
+using Api.Service.AdminServices;
+using Api.Service.AuthService;
+using Api.Service.ClassroomServices;
+using Api.Service.UserService;
+
 using Data;
 using Data.Seed;
 
-using Api.Extensions;
-
-using FastEndpoints.Swagger;
-
-using Api.Service.AuthService;
-using Api.Service.TeacherService;
-using Api.Service.UserService;
-
 using FastEndpoints.Security;
+using FastEndpoints.Swagger;
 
 using JorgeSerrano.Json;
 
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -70,6 +68,7 @@ builder.Services.AddSwaggerDoc(addJWTBearerAuth: true);
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerAuthEndpointService, CustomerAuthEndpointService>();
 builder.Services.AddScoped<IClassroomService, ClassroomService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 var app = builder.Build();
 

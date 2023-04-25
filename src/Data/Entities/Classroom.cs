@@ -20,7 +20,7 @@ public class Classroom
     public required string Description { get; set; }
     public required List<Student> Students { get; set; }
     public int TeacherId { get; set; }
-    public required Teacher Teacher { get; set; }
+    public Teacher Teacher { get; set; }
     public required List<StudySession> StudySessions { get; set; }
     public bool IsDeleted { get; set; }
 }
