@@ -145,6 +145,7 @@ public class AdminService : IAdminService
             Name = s.Name,
             PhoneNumber = s.Phone,
             Username = s.Username,
+            Avatar = s.Avatar,
             StudySessions = s.Classrooms.SelectMany(c => c.StudySessions).Select(ss => new StudySessionDto
             {
                 Id = ss.Id, DayOfWeek = ss.DayOfWeek.ToString(), StartTime = ss.StartTime, EndTime = ss.EndTime
@@ -161,6 +162,7 @@ public class AdminService : IAdminService
             Name = s.Name,
             PhoneNumber = s.Phone,
             Username = s.Username,
+            Avatar = s.Avatar,
             TeachingSessions = s.Classrooms.SelectMany(c => c.StudySessions).Select(ss => new StudySessionDto
             {
                 Id = ss.Id, DayOfWeek = ss.DayOfWeek.ToString(), StartTime = ss.StartTime, EndTime = ss.EndTime
