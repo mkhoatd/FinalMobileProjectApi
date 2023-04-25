@@ -102,7 +102,7 @@ public class CreateClassroomEndpoint : Endpoint<CreateClassroomRequest, CreateCl
                 StartTime = TimeSpan.Parse(ss.StartTime),
                 EndTime = TimeSpan.Parse(ss.EndTime)
             }).ToList();
-        bool res = await _adminService.CreateClasssroomAsync(Enum.Parse<SubjectName>(req.Subject),
+        bool res = await _adminService.CreateClassroomAsync(Enum.Parse<SubjectName>(req.Subject),
             req.TeacherId, req.Description, req.StudentIds, studySessionAdminDtos);
         if (res == false)
         {

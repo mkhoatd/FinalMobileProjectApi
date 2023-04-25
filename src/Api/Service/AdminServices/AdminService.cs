@@ -110,7 +110,7 @@ public class AdminService : IAdminService
         return true;
     }
 
-    public async Task<bool> CreateClasssroomAsync(SubjectName subject, int teacherId, string description,
+    public async Task<bool> CreateClassroomAsync(SubjectName subject, int teacherId, string description,
         List<int> studentIds, List<StudySessionAdminDto> studySessions)
     {
         List<Student> students = await _dbContext.Students.Where(s => studentIds.Contains(s.Id)).ToListAsync();
