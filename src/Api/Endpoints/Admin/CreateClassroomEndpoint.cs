@@ -66,12 +66,19 @@ public class CreateClassroomRequestValidator : Validator<CreateClassroomRequest>
 
                 return true;
             })
-            .WithMessage("Day of week must be either Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday")
-            .Must(ss =>
+            .WithMessage("Day of week must be either Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday");
+        RuleFor(x => x.StudySessions).NotEmpty().Must(ss =>
             {
                 foreach (StudySessionAdminRequestDto session in ss)
                 {
-                    if (TimeSpan.Parse(session.StartTime) >= TimeSpan.Parse(session.EndTime))
+                    try
+                    {
+                        if (TimeSpan.Parse(session.StartTime) >= TimeSpan.Parse(session.EndTime))
+                        {
+                            return false;
+                        }
+                    }
+                    catch (FormatException ex)
                     {
                         return false;
                     }
@@ -80,6 +87,7 @@ public class CreateClassroomRequestValidator : Validator<CreateClassroomRequest>
                 return true;
             })
             .WithMessage("Start time must be earlier than end time");
+
         RuleFor(x => x.Subject).NotEmpty()
             .Must(sn => Enum.IsDefined(typeof(SubjectName), sn))
             .WithMessage("Subject name must be either Toán, Văn, Anh, Lý, Hóa, Sinh");
