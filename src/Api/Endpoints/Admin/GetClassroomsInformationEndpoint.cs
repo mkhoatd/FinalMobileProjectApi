@@ -19,7 +19,7 @@ public record StudySessionInformation
 public record ClassroomInformation
 {
     public int Id { get; init; }
-    public required SubjectName Name { get; init; }
+    public required string Name { get; init; }
     public required string Description { get; init; }
     public int TeacherId { get; init; }
     public required string TeacherName { get; init; }
@@ -52,7 +52,7 @@ public class GetClassroomsInformationEndpoint : EndpointWithoutRequest<GetClassr
         {
             Description = c.Description,
             Id = c.Id,
-            Name = c.Name,
+            Name = c.Name.ToString(),
             ClassroomSize = c.Students.Count,
             TeacherName = c.Teacher.Name,
             StudySessions = c.StudySessions.Select(s => new StudySessionInformation
