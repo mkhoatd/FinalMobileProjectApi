@@ -1,5 +1,5 @@
 ﻿using Api.Endpoints.Admin.Dtos;
-using Api.Endpoints.Classroom.Dto;
+using Api.Endpoints.Classrooms.Dto;
 
 using Bogus;
 
@@ -23,6 +23,7 @@ public class AdminService : IAdminService
     {
         _dbContext = dbContext;
     }
+    
 
     public async Task<bool> CreateAccountAsync(string phoneNumber, string password, RoleName roleName,
         string username, string name, CancellationToken ct)
@@ -114,8 +115,8 @@ public class AdminService : IAdminService
         int numberOfStudent, List<StudySessionAdminDto> studySessions)
     {
         // select random numberOfStudent
-        List<Student> students = await _dbContext.Students.OrderBy(s => Guid.NewGuid()).Take(numberOfStudent)
-            .ToListAsync();
+        List<Student> students =
+            (await _dbContext.Students.ToListAsync()).OrderBy(s => Guid.NewGuid()).Take(numberOfStudent).ToList();
         Classroom classroom = new()
         {
             Name = subject,

@@ -1,4 +1,4 @@
-﻿namespace Api.Endpoints.Classroom.Dto;
+﻿namespace Api.Endpoints.Classrooms.Dto;
 
 public record ClassroomDto
 {

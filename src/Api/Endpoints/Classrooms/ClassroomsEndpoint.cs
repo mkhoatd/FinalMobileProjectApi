@@ -1,4 +1,5 @@
-﻿using Api.Endpoints.Classroom.Dto;
+﻿using Api.Endpoints.Classrooms.Dto;
+using Api.Endpoints.Classrooms.Dto;
 using Api.Interface;
 using Api.Service.ClassroomServices;
 
@@ -8,7 +9,7 @@ using Data.Entities;
 // ReSharper disable ClassNeverInstantiated.Global
 #pragma warning disable CS8618
 
-namespace Api.Endpoints.Classroom;
+namespace Api.Endpoints.Classrooms;
 
 public record DataClassroomsEndpoint
 {

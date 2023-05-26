@@ -1,4 +1,4 @@
-﻿using Api.Endpoints.Classroom.Dto;
+﻿using Api.Endpoints.Classrooms.Dto;
 
 namespace Api.Endpoints.Admin.Dtos;
 
