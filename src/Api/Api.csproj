@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+      <PackageReference Include="Community.Expo.Server.SDK" Version="1.2.1.1" />
       <PackageReference Include="FastEndpoints" Version="5.8.1" />
       <PackageReference Include="FastEndpoints.Generator" Version="5.8.1">
           <PrivateAssets>all</PrivateAssets>

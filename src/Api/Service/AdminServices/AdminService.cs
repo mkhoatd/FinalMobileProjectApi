@@ -7,6 +7,9 @@ using Data;
 using Data.Entities;
 using Data.Entities.Interfaces;
 
+using ExpoCommunityNotificationServer.Client;
+using ExpoCommunityNotificationServer.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 using OneOf;
@@ -137,6 +140,21 @@ public class AdminService : IAdminService
 
         _dbContext.Classrooms.Add(classroom);
         await _dbContext.SaveChangesAsync();
+
+        var teacher = await _dbContext.Teachers.FindAsync(teacherId);
+        if (teacher!.DeviceToken is not null)
+        {
+            IPushApiClient _client = new PushApiClient("9te8kgHCahtHteAdxYeKytKuRRGdbaXL4wHWVYQX");
+            PushTicketRequest pushTicketRequest = new PushTicketRequest()
+            {
+                PushTo = new List<string>() { teacher.DeviceToken },
+                PushTitle = "New Classroom",
+                PushBody = "You are added to new classroom"
+            };
+
+            PushTicketResponse result = await _client.SendPushAsync(pushTicketRequest);
+        }
+
         return true;
     }
 
