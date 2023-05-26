@@ -142,7 +142,7 @@ public class AdminService : IAdminService
         await _dbContext.SaveChangesAsync();
 
         var teacher = await _dbContext.Teachers.FindAsync(teacherId);
-        if (teacher!.DeviceToken is not null)
+        if (!String.IsNullOrEmpty(teacher!.DeviceToken))
         {
             IPushApiClient _client = new PushApiClient("9te8kgHCahtHteAdxYeKytKuRRGdbaXL4wHWVYQX");
             PushTicketRequest pushTicketRequest = new PushTicketRequest()
