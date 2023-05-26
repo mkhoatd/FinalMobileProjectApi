@@ -22,7 +22,8 @@ public record ClassroomInformation
     public required SubjectName Name { get; init; }
     public required string Description { get; init; }
     public int TeacherId { get; init; }
-    public int NumberOfStudent { get; init; }
+    public required string TeacherName { get; init; }
+    public int ClassroomSize { get; init; }
     public required List<StudySessionInformation> StudySessions { get; init; }
 }
 
@@ -52,7 +53,8 @@ public class GetClassroomsInformationEndpoint : EndpointWithoutRequest<GetClassr
             Description = c.Description,
             Id = c.Id,
             Name = c.Name,
-            NumberOfStudent = c.Students.Count,
+            ClassroomSize = c.Students.Count,
+            TeacherName = c.Teacher.Name,
             StudySessions = c.StudySessions.Select(s => new StudySessionInformation
             {
                 DayOfWeek = s.DayOfWeek.ToString(),

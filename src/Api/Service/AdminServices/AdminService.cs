@@ -115,11 +115,11 @@ public class AdminService : IAdminService
     }
 
     public async Task<bool> CreateClassroomAsync(SubjectName subject, int teacherId, string description,
-        int numberOfStudent, List<StudySessionAdminDto> studySessions)
+        int classroomSize, List<StudySessionAdminDto> studySessions)
     {
-        // select random numberOfStudent
+        // select random classroomSize
         List<Student> students =
-            (await _dbContext.Students.ToListAsync()).OrderBy(s => Guid.NewGuid()).Take(numberOfStudent).ToList();
+            (await _dbContext.Students.ToListAsync()).OrderBy(s => Guid.NewGuid()).Take(classroomSize).ToList();
         Classroom classroom = new()
         {
             Name = subject,
