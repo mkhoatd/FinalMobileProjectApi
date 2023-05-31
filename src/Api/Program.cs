@@ -97,7 +97,7 @@ if (app.Environment.IsDevelopment())
     app.UseDefaultExceptionHandler();
 }
 
-app.UseHttpLogging();
+// app.UseHttpLogging();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseResponseCaching();
