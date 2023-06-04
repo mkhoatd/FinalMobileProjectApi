@@ -5,4 +5,7 @@ FinalMobileProjectApi
 
 ```bash
 docker compose up
+cd src/Api
+dotnet build
+dotnet run
 ```
